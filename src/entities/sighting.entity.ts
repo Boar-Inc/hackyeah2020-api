@@ -1,15 +1,15 @@
-import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, BaseEntity} from 'typeorm';
+import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from 'typeorm';
 
 @Entity()
-export class Sighting extends BaseEntity {
+export class Sighting {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
     type: 'point',
     transformer: {
-      from: v => {return {lat: v.x, long: v.y}},
-      to: v => `${v.lat},${v.lng}`,
+      from: (v: {x: number, y: number}) => ({lat: v.x, long: v.y}),
+      to: (v: {lat: number, lng: number}) => `${v.lat},${v.lng}`,
     },
   })
   coordinates: {lat: number, lng: number};

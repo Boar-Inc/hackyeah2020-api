@@ -9,7 +9,7 @@ export const DB = {
       name: 'default',
       url: process.env.DB_URL,
       entities: [
-        "src/**/*.entity{.ts,.js}"
+        'src/**/*.entity{.ts,.js}',
       ],
       synchronize: process.env.NODE_ENV === 'development',
       dropSchema: process.env.DROP_DB === 'true',
