@@ -1,5 +1,5 @@
 import * as Router from 'koa-router';
-import {DB, DB as db} from './utils/db';
+import {DB} from './utils/db';
 import {Sighting} from './entities/sighting.entity';
 
 const router = new Router();
@@ -8,7 +8,7 @@ router.get('/sightings', async ctx => {
   const radius = ctx.query.radius;
 
   if (radius)
-    ctx.body = await db.conn()
+    ctx.body = await DB.conn()
       .createQueryBuilder(Sighting, 'sighting')
       .where('ST_DWithin(sighting.coordinates::geometry, ST_MakePoint(:x, :y), :radius)')
       .setParameters({
@@ -23,13 +23,13 @@ router.get('/sightings', async ctx => {
 
 router.post('/sightings', async ctx => {
 
-  console.log(ctx.request.body);
+  const coords = {
+    lat: +ctx.request.body.lat,
+    lng: +ctx.request.body.lng,
+  };
 
   const sighting = new Sighting();
-  sighting.coordinates = {
-    lat: Number(ctx.request.body.lat),
-    lng: Number(ctx.request.body.lng),
-  };
+  sighting.coordinates = coords;
 
   ctx.body = await DB.repo(Sighting).save(sighting);
   
