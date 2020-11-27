@@ -1,5 +1,7 @@
 import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from 'typeorm';
 
+export const BoarCondition = ['alive', 'dead', 'remains'] as const;
+
 @Entity()
 export class Sighting {
   @PrimaryGeneratedColumn('uuid')
@@ -7,6 +9,14 @@ export class Sighting {
 
   @Column({type: 'geography', srid: 4326})
   location: {type: string, coordinates: number[]};
+
+  @Column({
+    type: 'enum',
+    enum: BoarCondition,
+    default: BoarCondition[0],
+  })
+  condition: typeof BoarCondition[number];
+  
 
   @CreateDateColumn()
   createdOn: Date;
