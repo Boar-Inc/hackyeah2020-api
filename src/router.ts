@@ -1,6 +1,7 @@
 import * as Router from 'koa-router';
 import {DB} from './utils/db';
 import {Sighting} from './entities/sighting.entity';
+import { Geometry } from 'geojson';
 
 const router = new Router();
 
@@ -23,13 +24,13 @@ router.get('/sightings', async ctx => {
 
 router.post('/sightings', async ctx => {
 
-  const coords = {
-    lat: +ctx.request.body.lat,
-    lng: +ctx.request.body.lng,
+  const point = {
+    type: 'Point',
+    coordinates: [+ctx.request.body.lng, +ctx.request.body.lat],
   };
 
   const sighting = new Sighting();
-  sighting.coordinates = coords;
+  sighting.location = point;
 
   ctx.body = await DB.repo(Sighting).save(sighting);
   

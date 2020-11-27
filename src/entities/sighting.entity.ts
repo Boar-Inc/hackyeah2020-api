@@ -5,14 +5,8 @@ export class Sighting {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({
-    type: 'point',
-    transformer: {
-      from: (v: {x: number, y: number}) => ({lat: v.x, long: v.y}),
-      to: (v: {lat: number, lng: number}) => `${v.lat},${v.lng}`,
-    },
-  })
-  coordinates: {lat: number, lng: number};
+  @Column({type: 'geography', srid: 4326})
+  location: {type: string, coordinates: number[]};
 
   @CreateDateColumn()
   createdOn: Date;
