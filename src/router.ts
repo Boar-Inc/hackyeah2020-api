@@ -1,5 +1,5 @@
 import * as Router from 'koa-router';
-import {DB} from './utils/db';
+import {DB, pointBelongsTo} from './utils/db';
 import {Sighting} from './entities/sighting.entity';
 import * as path from 'path';
 
@@ -11,7 +11,7 @@ router.get('/sightings', async ctx => {
   if (radius)
     ctx.body = await DB.conn()
       .createQueryBuilder(Sighting, 'sighting')
-      .where('ST_DWithin(sighting.coordinates::geometry, ST_MakePoint(:x, :y), :radius)')
+      .where('ST_DWithin(sighting.location::geometry, ST_MakePoint(:x, :y), :radius)')
       .setParameters({
         x: +ctx.query.x,
         y: +ctx.query.y,
@@ -31,7 +31,12 @@ router.post('/sightings', async ctx => {
 
   const sighting = new Sighting();
   sighting.location = point;
-  sighting.imageURL = path.join(process.env.API_URL + ctx.request.files.image.path);
+  if (ctx.request.files.image)
+    sighting.imageURL = path.join(process.env.API_URL + ctx.request.files.image.path);
+
+  const gmina = await pointBelongsTo(+ctx.request.body.lat, +ctx.request.body.lng);
+  if (!gmina) ctx.throw(400);
+  sighting.gmina = gmina;
 
   ctx.body = await DB.repo(Sighting).save(sighting);
   

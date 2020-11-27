@@ -9,6 +9,7 @@ import * as cors from '@koa/cors';
 import * as logger from 'koa-logger';
 import * as koaBody from 'koa-body';
 import router from './router';
+import raports from './raports';
 
 (async () => {
   const app = new Koa();
@@ -25,6 +26,7 @@ import router from './router';
   app.use(logger());
 
   app.use(router.routes()).use(router.allowedMethods());
+  app.use(raports.routes()).use(raports.allowedMethods());
 
   await DB.connect();
 
