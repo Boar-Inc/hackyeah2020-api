@@ -1,7 +1,7 @@
 import * as Router from 'koa-router';
 import {DB} from './utils/db';
 import {Sighting} from './entities/sighting.entity';
-import { Geometry } from 'geojson';
+import * as path from 'path';
 
 const router = new Router();
 
@@ -31,6 +31,7 @@ router.post('/sightings', async ctx => {
 
   const sighting = new Sighting();
   sighting.location = point;
+  sighting.imageURL = path.join(process.env.API_URL + ctx.request.files.image.path);
 
   ctx.body = await DB.repo(Sighting).save(sighting);
   

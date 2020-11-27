@@ -13,7 +13,15 @@ import router from './router';
 (async () => {
   const app = new Koa();
   app.use(cors());
-  app.use(koaBody());
+  app.use(koaBody({
+    multipart: true,
+    formidable: {
+      uploadDir: 'uploads',
+      keepExtensions: true,
+      maxFileSize: 5 * 1024 * 1024, // 5 MB
+      multiples: false,
+    },
+  }));
   app.use(logger());
 
   app.use(router.routes()).use(router.allowedMethods());

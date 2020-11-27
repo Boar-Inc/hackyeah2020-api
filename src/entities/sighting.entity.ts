@@ -16,7 +16,9 @@ export class Sighting {
     default: BoarCondition[0],
   })
   condition: typeof BoarCondition[number];
-  
+
+  @Column()
+  imageURL: string;
 
   @CreateDateColumn()
   createdOn: Date;
