@@ -11,6 +11,13 @@ router.get('/gminaByCode', async ctx => {
   ctx.body = await repo.findOne({where: {code: ctx.query.code}});
 });
 
+router.get('/report/allSightingsWithGmina', async ctx => {
+  ctx.body = await DB.conn()
+    .createQueryBuilder(Sighting, 'sighting')
+    .leftJoinAndSelect('sighting.gmina', 'gmina')
+    .getMany();
+});
+
 router.get('/report/json', async ctx => {
   const gminy = await DB.conn()
     .query(`

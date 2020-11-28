@@ -40,6 +40,6 @@ export class Sighting {
   @CreateDateColumn()
   createdOn: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({select: false})
   updatedOn: Date;
 }
