@@ -92,7 +92,7 @@ router.post('/sightings', upload.single('image'), async ctx => {
       where: {
         imageURL: imgUrl,
       },
-    })) ctx.throw(499);
+    })) ctx.throw(400);
 
     sighting.imageURL = imgUrl;
     await fs.promises.writeFile('uploads/' + sighting.imageURL, buf);
