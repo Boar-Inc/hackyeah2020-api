@@ -23,7 +23,7 @@ const allowedTypes = ['image/jpeg', 'image/png'];
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5242880,
+    fileSize: 10485760,
     files: 1,
   },
   fileFilter: (req, file, next) => {
