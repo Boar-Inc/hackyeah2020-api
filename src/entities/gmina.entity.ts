@@ -30,7 +30,7 @@ export class Gmina {
   shapeArea: string | null;
 
   @Index({spatial: true})
-  @Column({type: 'geography', srid: 4326, select: false})
+  @Column({type: 'geography', srid: 4326, select: false, nullable: true})
   geom: unknown;
 
 }
