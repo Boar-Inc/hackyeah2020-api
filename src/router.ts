@@ -35,7 +35,7 @@ router.post('/sightings', async ctx => {
   sighting.amount = +ctx.request.body.amount;
   sighting.condition = ctx.request.body.condition;
   if (ctx.request.files.image)
-    sighting.imageURL = path.join(ctx.request.files.image.path);
+    sighting.imageURL = '/' + ctx.request.files.image.path.replace('\\', '/');
 
   const gmina = await pointBelongsTo(+ctx.request.body.lat, +ctx.request.body.lng);
   if (!gmina) ctx.throw(400);
