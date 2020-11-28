@@ -34,7 +34,7 @@ export class Sighting {
   @Column({type: 'geography', srid: 4326})
   location: {type: string, coordinates: number[]};
 
-  @Column({nullable: true, select: false})
+  @Column({nullable: true})
   imageURL: string;
 
   @CreateDateColumn()

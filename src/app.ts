@@ -8,6 +8,7 @@ import {DB} from './utils/db';
 import * as cors from '@koa/cors';
 import * as logger from 'koa-logger';
 import * as koaBody from 'koa-body';
+import * as koaStatic from 'koa-static';
 import router from './router';
 import reports from './reports';
 
@@ -27,6 +28,8 @@ import reports from './reports';
 
   app.use(router.routes()).use(router.allowedMethods());
   app.use(reports.routes()).use(reports.allowedMethods());
+
+  app.use(koaStatic('uploads', {maxage: 120}));
 
   await DB.connect();
 

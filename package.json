@@ -51,6 +51,7 @@
     "koa-logger": "^3.2.1",
     "koa-mount": "^4.0.0",
     "koa-router": "^9.4.0",
+    "koa-static": "^5.0.0",
     "officegen": "^0.6.4",
     "pdfmake": "^0.1.68",
     "pg": "^8.3.2",
