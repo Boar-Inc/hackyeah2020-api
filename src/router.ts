@@ -31,6 +31,9 @@ router.post('/sightings', async ctx => {
 
   const sighting = new Sighting();
   sighting.location = point;
+  sighting.age = +ctx.request.body.age;
+  sighting.amount = +ctx.request.body.amount;
+  sighting.condition = ctx.request.body.condition;
   if (ctx.request.files.image)
     sighting.imageURL = path.join(process.env.API_URL + ctx.request.files.image.path);
 
