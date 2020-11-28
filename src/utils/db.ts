@@ -16,8 +16,7 @@ export const DB = {
       ],
       synchronize: process.env.NODE_ENV === 'development',
       dropSchema: process.env.DROP_DB === 'true',
-
-      // logging: true,
+      logging: process.env.DB_LOGGING === 'true',
     });
   },
   repo: getRepository,
