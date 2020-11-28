@@ -1,5 +1,5 @@
 import {createConnection, getConnection, getRepository} from 'typeorm';
-import { Gmina } from '../entities/gmina.entity';
+import {Gmina} from '../entities/gmina.entity';
 
 type ConnectType = 'establish' | 'retain';
 
@@ -23,8 +23,8 @@ export const DB = {
   tableName: (entt: new () => unknown) => getRepository(entt).getMetadata().tableName,
 };
 
-export async function pointBelongsTo (lat: number, lng: number) {
-  const gmina = await DB.conn()
+export async function pointBelongsTo (lat: number, lng: number): Promise<Gmina> {
+  return DB.conn()
     .createQueryBuilder(Gmina, 'gmina')
     .where('ST_Contains(gmina.geom::geometry, ST_SetSRID(ST_MakePoint(:lng, :lat),4326))')
     .setParameters(
@@ -34,5 +34,4 @@ export async function pointBelongsTo (lat: number, lng: number) {
       },
     )
     .getOne();
-  return gmina;
 }

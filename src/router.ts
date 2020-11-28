@@ -42,4 +42,13 @@ router.post('/sightings', async ctx => {
   
 });
 
+router.post('/deleteSighting', async ctx => {
+  console.log(ctx.request.body);
+  const res = await DB.conn()
+    .getRepository(Sighting)
+    .delete(ctx.request.body.id);
+
+  ctx.body = res;
+});
+
 export default router;
