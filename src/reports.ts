@@ -2,26 +2,39 @@ import * as Router from 'koa-router';
 import {DB} from './utils/db';
 import {Sighting} from './entities/sighting.entity';
 import {Gmina} from './entities/gmina.entity';
-import {parse} from 'json2csv';
+import {parse, transforms} from 'json2csv';
 
 const router = new Router();
 
-router.get('/gminaByCode', async ctx => {
-  const repo = DB.conn().getRepository(Gmina);
-  ctx.body = await repo.findOne({where: {code: ctx.query.code}});
+router.get('/report/sightingsWithinGmina', async ctx => {
+  if (!ctx.request.query.code) ctx.throw(400);
+
+  ctx.body = await DB.repo(Gmina)
+    .findOne({
+      where: {code: ctx.request.query.code},
+      relations: ['sightings'],
+      select: ['name', 'code', 'gid', 'geom'],
+    });
 });
 
-router.get('/report/allSightingsWithGmina', async ctx => {
-  ctx.body = await DB.conn()
+router.get('/report/allSightings', async ctx => {
+  let res = await DB.conn()
     .createQueryBuilder(Sighting, 'sighting')
     .leftJoinAndSelect('sighting.gmina', 'gmina')
     .getMany();
+
+  if (ctx.request.query.format === 'csv')
+    res = parse(res, {
+      fields: ['id', 'gmina.name', 'gmina.code', 'amount', 'condition'],
+    });
+
+  ctx.body = res;
 });
 
-router.get('/report/json', async ctx => {
-  const gminy = await DB.conn()
+router.get('/report/gminyWithSightings', async ctx => {
+  let res = await DB.conn()
     .query(`
-    SELECT "gmina"."gid" AS "id", (array_agg("gmina"."jpt_kod_je"))[1] AS code,
+    SELECT "gmina"."gid" AS "gid", (array_agg("gmina"."jpt_kod_je"))[1] AS code,
     (array_agg("gmina"."jpt_nazwa_"))[1] AS name,
     json_build_object(
       'alive', COUNT(sighting.id) filter (where sighting.condition = 'alive'),
@@ -32,26 +45,12 @@ router.get('/report/json', async ctx => {
     FROM "gmina" "gmina" INNER JOIN "sighting" "sighting" ON "sighting"."gminaGid"="gmina"."gid"
     GROUP BY "gmina"."gid"`);
 
-  ctx.body = gminy;
-});
+  if (ctx.request.query.format === 'csv')
+    res = parse(res, {
+      fields: ['gid', 'name', 'code', 'sightings.alive', 'sightings.dead', 'sightings.remains'],
+    });
 
-router.get('/report/csv', async ctx => {
-  const gminy = await DB.conn().query(`
-  SELECT "gmina"."gid" AS "id", (array_agg("gmina"."jpt_kod_je"))[1] AS code,
-  (array_agg("gmina"."jpt_nazwa_"))[1] AS name, 
-  COUNT(sighting.id) filter (where sighting.condition = 'alive') as alive,
-  COUNT(sighting.id) filter (where sighting.condition = 'dead') as dead,
-  COUNT(sighting.id) filter (where sighting.condition = 'remains') as remains
-  FROM "gmina" "gmina" INNER JOIN "sighting" "sighting" ON "sighting"."gminaGid"="gmina"."gid"
-  GROUP BY "gmina"."gid"
-  `);
-
-  try {
-    const csv = parse(gminy);
-    ctx.body = csv;
-  } catch (e) {
-    ctx.throw = e;
-  }
+  ctx.body = res;
 });
 
 export default router;
