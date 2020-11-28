@@ -82,7 +82,7 @@ router.post('/sightings', upload.single('image'), async ctx => {
   if (ctx.request.file) {
     const buf = await imagemin.buffer(ctx.request.file.buffer, imageminOptions);
 
-    const imgUrl = 'uploads/' + crypto
+    const imgUrl = crypto
       .createHash('md5')
       .update(buf)
       .digest('hex')
@@ -95,7 +95,7 @@ router.post('/sightings', upload.single('image'), async ctx => {
     })) ctx.throw(499);
 
     sighting.imageURL = imgUrl;
-    await fs.promises.writeFile(sighting.imageURL, buf);
+    await fs.promises.writeFile('uploads/' + sighting.imageURL, buf);
   }
 
   ctx.body = await DB.repo(Sighting).save(sighting);
@@ -109,7 +109,7 @@ router.post('/deleteSighting', async ctx => {
     .getRepository(Sighting)
     .findOne(ctx.request.body);
 
-  if (ent.imageURL) fs.promises.unlink(ent.imageURL);
+  if (ent.imageURL) fs.promises.unlink('uploads/' + ent.imageURL);
 
   const res = await DB.conn()
     .getRepository(Sighting)
