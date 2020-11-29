@@ -7,13 +7,14 @@ import * as path from 'path';
 import * as multer from '@koa/multer';
 
 import * as imagemin from 'imagemin';
-import * as imageminMozjpeg from 'imagemin-mozjpeg';
+// import * as imageminMozjpeg from 'imagemin-mozjpeg';
 import imageminPngquant from 'imagemin-pngquant';
+import * as imageminJpegtran from 'imagemin-jpegtran';
 
 const imageminOptions: imagemin.BufferOptions = {
   plugins: [
     imageminPngquant({speed: 3, strip: true}),
-    imageminMozjpeg(),
+    imageminJpegtran(),
   ],
 };
 
