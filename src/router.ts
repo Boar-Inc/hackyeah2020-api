@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Router from 'koa-router';
 import {DB, pointBelongsTo} from './utils/db';
 import {Sighting} from './entities/sighting.entity';
@@ -33,7 +34,9 @@ const upload = multer({
   },
 });
 
-router.get('/ping', async ctx => ctx.body = 'pong');
+router.get('/ping', async ctx => {
+  ctx.body = 'pong';
+});
 
 router.get('/sightings', async ctx => {
   const radius = ctx.query.radius;
@@ -82,14 +85,14 @@ router.post('/sightings', upload.single('image'), async ctx => {
   sighting.amount = +ctx.request.body.amount;
   sighting.condition = ctx.request.body.condition;
   sighting.gmina = gmina;
-  if (ctx.request.file) {
-    const buf = await imagemin.buffer(ctx.request.file.buffer, imageminOptions);
+  if ((ctx.request as any).file) {
+    const buf = await imagemin.buffer((ctx.request as any).file.buffer, imageminOptions);
 
     const imgUrl = crypto
       .createHash('md5')
       .update(buf)
       .digest('hex')
-      .slice(0, 20) + path.extname(ctx.request.file.originalname);
+      .slice(0, 20) + path.extname((ctx.request as any).file.originalname);
 
     if (await DB.repo(Sighting).findOne({
       where: {
