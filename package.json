@@ -1,7 +1,7 @@
 {
-  "name": "ensemble-api",
-  "version": "1.2.5",
-  "description": "The Ensemble API",
+  "name": "boarapi",
+  "version": "1.2.6",
+  "description": "eee",
   "main": "dist/app.js",
   "author": "judehunter <matisowagm@gmail.com>",
   "license": "UNLICENSED",
