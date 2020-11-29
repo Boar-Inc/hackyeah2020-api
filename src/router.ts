@@ -33,6 +33,8 @@ const upload = multer({
   },
 });
 
+router.get('/ping', async ctx => ctx.body = 'pong');
+
 router.get('/sightings', async ctx => {
   const radius = ctx.query.radius;
 
